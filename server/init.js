@@ -191,18 +191,61 @@ Meteor.startup(function () {
             text: "Does he or she like humor? "
         }));
 
+        var questionMakesYouSmile2 = Questions.findOne(Questions.insert({
+            name: "makes you smile2",
+            text: "Does he or she like humor2? "
+        }));
+
+        var questionMakesYouSmile3 = Questions.findOne(Questions.insert({
+            name: "makes you smile3",
+            text: "Does he or she like humor3? "
+        }));
+
+        var questionMakesYouSmile4 = Questions.findOne(Questions.insert({
+            name: "makes you smile4",
+            text: "Does he or she like humor4? "
+        }));
+
         Gifts.insert({
             name: "Some gift",
             description: "Some description",
             events: [eventHousewarming],
             price: 24,
-            gender: 'V',
+            gender: 'F',
             age: {
                 min: 25,
                 max: 40
             },
             categories: [categoryBooks],
-            questions: [questionMakesYouSmile]
+            questions: [questionMakesYouSmile, questionMakesYouSmile2]
+        });
+
+        Gifts.insert({
+            name: "Some gift2",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryBooks],
+            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+        });
+
+        Gifts.insert({
+            name: "Some gift3",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryBooks],
+            questions: [questionMakesYouSmile, questionMakesYouSmile4]
         });
     }
 });
