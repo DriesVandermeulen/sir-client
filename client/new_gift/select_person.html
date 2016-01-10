@@ -1,0 +1,34 @@
+<ion-view view-title="Select Person">
+    <ion-content>
+        <div class="list">
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Name</span>
+                <input type="text" ng-model="selectPerson.track.name" >
+            </label>
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Age</span>
+                <input type="text" ng-model="selectPerson.track.age">
+            </label>
+            <label class="item item-input item-select">
+                <span class="input-label">Gender</span>
+                <select ng-model="selectPerson.track.gender">
+                    <option value="" selected>Select one</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+            </label>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button class="button button-block button-positive" ng-click="selectPerson.previous()">
+                    previous
+                </button>
+            </div>
+            <div class="col">
+                <button class="button button-block button-positive" ng-click="selectPerson.next()">
+                    Next
+                </button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

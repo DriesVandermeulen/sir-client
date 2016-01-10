@@ -1,0 +1,17 @@
+<ion-view view-title="Select Event">
+    <ion-content>
+        <ion-list>
+            <ion-radio ng-model="selectEvent.track.event" ng-value="'baby party'">Baby Party</ion-radio>
+            <ion-radio ng-model="selectEvent.track.event" ng-value="'housewarming'">Housewarming</ion-radio>
+            <ion-radio ng-model="selectEvent.track.event" ng-value="'thank you'">Thank You</ion-radio>
+        </ion-list>
+        <div class="row">
+            <div class="col-50 col-offset-50">
+                <button class="button button-block button-positive" ng-click="selectEvent.next()">
+                    Next
+                </button>
+            </div>
+        </div>
+
+    </ion-content>
+</ion-view>

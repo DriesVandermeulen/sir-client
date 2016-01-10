@@ -1,0 +1,36 @@
+$sir-margin: 10px;
+$sir-padding: 10px;
+
+$sir-border-color: #E1E1E1;
+
+$sir-primary-color: #33C3F0;
+$sir-primary-color-hover: #1EAEDB;
+
+$sir-white: #fff;
+$sir-facebook-color: #3b5998;
+$sir-facebook-hover-color: #2b4170;
+
+$sir-golden-poppy: #F0C20C;
+$sir-light-salmon: #FC8363;
+$sir-conifer: #A9CF54;
+
+.login {}
+
+.login-logo {
+    margin-top: $sir-margin*6;
+    margin-bottom: $sir-margin*6;
+
+    img {
+        height: 100px
+    }
+}
+
+.login-inputs,
+.login-buttons {
+    padding: 0 $sir-padding*2;
+}
+
+.no-padding { padding: 0 !important; }
+.no-margin { margin: 0 !important; }
+
+.row.no-padding .col { padding: 0 !important; }

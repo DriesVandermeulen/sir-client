@@ -1,0 +1,20 @@
+<ion-view>
+    <ion-content class="login" scroll="false">
+        <div class="text-center login-logo">
+            <img src="img/logo-black.png">
+        </div>
+        <div class="list login-inputs" >
+            <div class="item item-input">
+                <input ng-model="login.data.email" type="text" placeholder="Your email">
+            </div>
+            <div class="item item-input">
+                <input ng-model="login.data.password" type="password" placeholder="Password">
+            </div>
+        </div>
+        <div class="list login-buttons">
+            <button class="button button-full button-positive" ng-click="login.login()">
+                Login
+            </button>
+        </div>
+    </ion-content>
+</ion-view>
