@@ -40,6 +40,16 @@ function config($stateProvider, $urlRouterProvider) {
             templateUrl: 'client/new_gift/select_price.html',
             controller: 'SelectPriceCtrl as selectPrice'
         })
+        .state('newGift.selectCategory', {
+            url: '/select-category',
+            templateUrl: 'client/new_gift/select_category.html',
+            controller: 'SelectCategoryCtrl as selectCategory'
+        })
+        .state('newGift.selectQuestion', {
+            url: '/select-question',
+            templateUrl: 'client/new_gift/select_question.html',
+            controller: 'SelectQuestionCtrl as selectQuestion'
+        })
         .state('newGift.giftProposal', {
             url: '/gift-proposal',
             templateUrl: 'client/new_gift/gift_proposal.html',

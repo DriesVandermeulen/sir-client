@@ -183,7 +183,18 @@ Meteor.startup(function () {
 
 
         var categoryBooks = Categories.findOne(Categories.insert({
-            name: "books"
+            name: "books",
+            text: "does he/she loves to read books ?"
+        }));
+        
+        var categoryDesign = Categories.findOne(Categories.insert({
+            name: "design",
+            text: "does he/she loves design?"
+        }));
+            var categoryGadget = Categories.findOne(Categories.insert({
+            name: "gadget",
+            text: "Is he/she a Gadget person?"
+
         }));
 
         var questionMakesYouSmile = Questions.findOne(Questions.insert({
@@ -207,7 +218,7 @@ Meteor.startup(function () {
         }));
 
         Gifts.insert({
-            name: "Some gift",
+            name: "Design Gift",
             description: "Some description",
             events: [eventHousewarming],
             price: 24,
@@ -216,12 +227,12 @@ Meteor.startup(function () {
                 min: 25,
                 max: 40
             },
-            categories: [categoryBooks],
+            categories: [categoryDesign],
             questions: [questionMakesYouSmile, questionMakesYouSmile2]
         });
 
         Gifts.insert({
-            name: "Some gift2",
+            name: "Books & Design Gift",
             description: "Some description",
             events: [eventHousewarming],
             price: 24,
@@ -230,12 +241,40 @@ Meteor.startup(function () {
                 min: 25,
                 max: 40
             },
-            categories: [categoryBooks],
+            categories: [categoryBooks, categoryDesign],
             questions: [questionMakesYouSmile, questionMakesYouSmile4]
         });
 
         Gifts.insert({
-            name: "Some gift3",
+            name: "Gadget",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryGadget],
+            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+        });
+
+        Gifts.insert({
+            name: "Design Gift2",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryDesign],
+            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+        });
+
+        Gifts.insert({
+            name: "Books 4",
             description: "Some description",
             events: [eventHousewarming],
             price: 24,
@@ -245,7 +284,22 @@ Meteor.startup(function () {
                 max: 40
             },
             categories: [categoryBooks],
-            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+            questions: [questionMakesYouSmile, questionMakesYouSmile3]
         });
+
+        Gifts.insert({
+            name: "Books 5",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryBooks],
+            questions: [questionMakesYouSmile,]
+        });
+
     }
 });

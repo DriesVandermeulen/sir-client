@@ -7,14 +7,24 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
 
     var trackId = $stateParams.trackId;
     var track = Tracks.findOne(trackId);
-    var suggestion = suggestGift(track);
+    
+
+    if(suggestGift(track)){
+        var suggestion = suggestGift(track);
+    }
 
     this.helpers({
         suggestion() { return suggestion }
     });
 
     this.suggestAnotherGift = () => {
-        suggestion = suggestGift(track);
+        track = Tracks.findOne(trackId);
+        if(suggestGift(track)){
+        this.suggestion = suggestGift(track);
+        }
+        else {
+            this.suggestion.name = "We don't have a gift for you at the moment";
+        }
     };
 
     function suggestGift(track) {
@@ -56,18 +66,27 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
             query.$and.push({"events.name": search.event});
         }
 
-        if(search.primary) {
-            query.$and.push({"tags.context.primary.name":{ $in: search.primary}});
+        if(search.categories) {
+            query.$and.push({"categories.name":{ $in: _.pluck(search.categories.yes, 'name')}});
+            query.$and.push({"categories.name":{ $nin: _.pluck(search.categories.no, 'name')}});
         }
+
         if(search.secondary) {
-            query.$and.push({"tags.context.secondary.name":{ $in: search.secondary}});
+            query.$and.push({"questions.name":{ $in: search.secondary}});
         }
         if(search.suggestions) {
-            query.$and.push({"id":{ $in: search.suggestions}});
+            //query.$and.push({"id":{ $nin: search.suggestions}});
+            query.$and.push({"_id":{ $nin: _.pluck(search.suggestions, '_id')}});
         }
-        if(search.gifts) {
-            query.$and.push({"id":{ $in: search.gifts}});
-        }
+        if(search.questions) {
+            query.$and.push({"questions.name":{ $nin: _.pluck(search.questions.no, 'name')}});
+
+            // query.$and.push({ "questions": { $elemMatch: { "_id": { $nin: _.pluck(search.questions.no, '_id') } } } });
+
+        }        
+
         return Gifts.find(query);
-    }
+    }   
+
+
 }

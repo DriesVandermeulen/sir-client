@@ -14,7 +14,7 @@ function SelectPriceCtrl($scope, $reactive, $state, $stateParams) {
 
     this.next = () => {
         updateTrack(this.track);
-        $state.go('newGift.gifts', { trackId });
+        $state.go('newGift.selectCategory', { trackId });
     };
 
     this.previous = () => {

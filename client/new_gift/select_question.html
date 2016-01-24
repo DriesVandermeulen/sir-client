@@ -1,0 +1,14 @@
+<ion-view view-title="Please anwser the following question:">
+    <ion-content>
+        <div>
+            <div>
+                <span ng-bind="selectQuestion.question.text"></span>
+                <br>
+                <button class="button button-block button-positive" ng-click="selectQuestion.yes()">Yes</button>
+                <button class="button button-block button-positive" ng-click="selectQuestion.no()">No</button>
+                <button class="button button-block button-positive" ng-click="selectQuestion.yes()">I Don't Know</button>
+            </div>
+            
+        </div>
+    </ion-content>
+</ion-view>

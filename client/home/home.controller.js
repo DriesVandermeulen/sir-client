@@ -25,6 +25,14 @@ function HomeCtrl ($scope, $reactive, $state) {
                 min: 0,
                 max: 100
             },
+            categories: {
+                yes: [],
+                no: []
+            },
+            questions: {
+                yes: [],
+                no: []
+            },
             suggestions: [],
             createdBy: Meteor.userId()
         });
