@@ -1,6 +1,13 @@
 Meteor.startup(function () {
     //Meteor.users.remove({});
 
+    process.env.MAIL_URL = 'smtp://postmaster%40giftsbysir.com:d4f12027a5eedd67d100313bf142d402@smtp.mailgun.org:587';
+
+    Mollie = Meteor.npmRequire("mollie-api-node");
+    mollie = new Mollie.API.Client;
+    //console.log(mollie);
+    mollie.setApiKey("test_Qk8pSfhFJgjhPAj5hDknAefAgcrAhU");
+
     if (Meteor.users.find().count() === 0) {
         var users = [
             {name:"Dries",email:"dries@giftsbysir.com",roles:['admin']},
@@ -302,4 +309,63 @@ Meteor.startup(function () {
         });
 
     }
+
+    
+    
+
+    Meteor.methods({
+    'sendMail': function(randomGift){
+        Email.send({
+        from: "stein@giftsbysir.com",
+        to: "steinvermeulen@gmail.com",
+        replyTo: "stein@giftsbysir.com",
+        subject: "Gift: " + randomGift.name + " was just ordered via Sir",
+        html: ''
+      });
+    },
+
+    'newPayment' : function(gift, track){
+    orderId = new Date().getTime();
+    //console.log(gift);
+    //console.log(track);
+    //console.log("NewPayment function called");
+    var paymentUrl;
+
+    mollie.payments.create({
+    amount: gift.price,
+    description: gift.name,
+    redirectUrl: "http://localhost:3000/#/gift-checkout"
+    },  Meteor.bindEnvironment(function (payment) {
+        if (payment.error) {
+            console.error(payment.error);
+            return;
+        }
+
+        /*
+         * Send the customer off to complete the payment.
+         */
+        //console.log(orderId);
+        //console.log(track);
+        //console.log(payment.getPaymentUrl());
+        paymentUrl = payment.getPaymentUrl(); 
+        
+        //console.log(Tracks);
+        Tracks.update(track._id, { $push: {
+                Payment: paymentUrl
+            }});
+
+        //console.log(Tracks.findOne(track._id));
+        console.log(paymentUrl);
+        //return paymentUrl;
+
+        
+        }));
+
+    console.log(paymentUrl);
+    return paymentUrl;
+    //console.log("Payments .Create method called for mollie");
+    //console.log(response.end());
+    }
+
+    });
 });

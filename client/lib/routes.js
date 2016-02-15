@@ -42,6 +42,7 @@ function config($stateProvider, $urlRouterProvider) {
         })
         .state('newGift.selectCategory', {
             url: '/select-category',
+            cache: false,
             templateUrl: 'client/new_gift/select_category.html',
             controller: 'SelectCategoryCtrl as selectCategory'
         })
@@ -54,6 +55,11 @@ function config($stateProvider, $urlRouterProvider) {
             url: '/gift-proposal',
             templateUrl: 'client/new_gift/gift_proposal.html',
             controller: 'GiftProposalCtrl as giftProposal'
+        })
+        .state('newGift.giftCheckout', {
+            url: '/gift-checkout',
+            templateUrl: 'client/new_gift/gift_checkout.html',
+            controller: 'GiftCheckoutCtrl as giftCheckout'
         })
         .state('newGift.gifts', {
             url: '/gifts',

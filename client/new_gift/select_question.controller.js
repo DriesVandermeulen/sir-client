@@ -10,8 +10,13 @@ function SelectQuestionCtrl($scope, $reactive, $state, $stateParams) {
     var gifts = findGifts(track).fetch();
     var questions = [];
 
-    this.question = findQuestion(track); 
-
+    if(findQuestion(track)){
+         this.question = findQuestion(track); 
+    }
+   
+    else{
+        $state.go('newGift.giftProposal', { trackId });
+    }
 
     this.helpers({
         track() { return Tracks.findOne(trackId) }

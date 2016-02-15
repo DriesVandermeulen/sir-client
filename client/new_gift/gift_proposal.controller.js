@@ -7,10 +7,16 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
 
     var trackId = $stateParams.trackId;
     var track = Tracks.findOne(trackId);
-    
+    var suggestion;
 
-    if(suggestGift(track)){
-        var suggestion = suggestGift(track);
+    if(suggestGift(track).length){
+        suggestion = suggestGift(track);
+    }
+
+    else{
+        suggestion = {
+            name:"We don't have a gift for you at the moment",
+            description:"please come back another time"};
     }
 
     this.helpers({
@@ -23,7 +29,9 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
         this.suggestion = suggestGift(track);
         }
         else {
-            this.suggestion.name = "We don't have a gift for you at the moment";
+            suggestion = {
+            name:"We don't have a gift for you at the moment",
+            description:"please come back another time"};
         }
     };
 
@@ -35,9 +43,12 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
         Tracks.update(track._id, { $push: {
             suggestions: randomGift
         }});
-        return randomGift;
+        if(randomGift){
+            return randomGift;
+        }
+        
     }
-
+    
     function findGifts(search) {
         var query = {$and: []};
 
@@ -90,7 +101,7 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
         return Gifts.find(query);
     }   
 
- function findGiftsAnsweredYes(search) {
+    function findGiftsAnsweredYes(search) {
         var query = {$and: []};
 
         if(search.age) {
@@ -141,5 +152,37 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
 
         return Gifts.find(query);
     }  
+
+    this.buyGift = () => {
+        //$state.go('newGift.giftCheckout', { trackId });
+        Meteor.call('sendMail', this.suggestion);
+        //var response = Meteor.call('newPayment', this.suggestion);
+
+        this.call('newPayment', this.suggestion, track, (err, result) => {
+           this.result = result;
+
+           track = Tracks.findOne(trackId);
+           console.log(track.Payment);
+           console.log(result);
+           window.open(track.Payment, '_self');   
+         });
+
+        // Meteor.call('newPayment', this.suggestion, track).then(
+        //     function(data){
+        //       track = Tracks.findOne(trackId);
+        //            console.log(track.Payment);
+        //            console.log(data);
+        //            window.open(data, '_self');   
+        //     },
+        //     function(err){
+        //       // Handle error
+        //       console.log('failed', err);
+        //     }
+        //   );
+
+
+    }
+
+
 
 }

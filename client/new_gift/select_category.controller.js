@@ -31,7 +31,13 @@ function SelectCategoryCtrl($scope, $reactive, $state, $stateParams) {
         });
 
         if(categories){
-             $state.go($state.current, {}, {reload: true});
+             $state.go($state.current, {trackId}, {reload: true});
+             //$state.go('newGift.selectCategory', { trackId });
+            //  $state.transitionTo($state.current, $stateParams, {
+            //     reload: true,
+            //     inherit: false,
+            //     notify: true
+            // });
         }
 
         else {
@@ -51,7 +57,9 @@ function SelectCategoryCtrl($scope, $reactive, $state, $stateParams) {
         });
 
         if(categories){
-             $state.go($state.current, {}, {reload: true});
+              $state.go($state.current, {trackId}, {reload: true});
+              //$state.go('newGift.selectCategory', { trackId });
+              //window.location.reload(true);
         }
 
         else {
