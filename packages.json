@@ -1,5 +1,7 @@
 {
-  
-    "mollie-api-node": "1.0.7"
+		
+	"future": "2.3.1",
+    "mollie-api-node": "1.1.0"
+
       
 }

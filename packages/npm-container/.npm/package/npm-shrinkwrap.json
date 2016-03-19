@@ -1,7 +1,10 @@
 {
   "dependencies": {
+    "future": {
+      "version": "2.3.1"
+    },
     "mollie-api-node": {
-      "version": "1.0.7",
+      "version": "1.1.0",
       "dependencies": {
         "underscore": {
           "version": "1.7.0"

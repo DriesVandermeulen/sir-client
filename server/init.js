@@ -3,9 +3,10 @@ Meteor.startup(function () {
 
     process.env.MAIL_URL = 'smtp://postmaster%40giftsbysir.com:d4f12027a5eedd67d100313bf142d402@smtp.mailgun.org:587';
 
-    Mollie = Meteor.npmRequire("mollie-api-node");
+    Mollie = Meteor.npmRequire('mollie-api-node');
+    Future = Meteor.npmRequire('fibers/future');
     mollie = new Mollie.API.Client;
-    //console.log(mollie);
+    console.log(mollie);
     mollie.setApiKey("test_Qk8pSfhFJgjhPAj5hDknAefAgcrAhU");
 
     if (Meteor.users.find().count() === 0) {
@@ -308,9 +309,7 @@ Meteor.startup(function () {
             questions: [questionMakesYouSmile,]
         });
 
-    }
-
-    
+    } 
     
 
     Meteor.methods({
@@ -324,47 +323,105 @@ Meteor.startup(function () {
       });
     },
 
-    'newPayment' : function(gift, track){
-    orderId = new Date().getTime();
-    //console.log(gift);
-    //console.log(track);
-    //console.log("NewPayment function called");
-    var paymentUrl;
+    // 'newPayment' : function(gift, track){
+    //     orderId = new Date().getTime();
+    //     //console.log(gift);
+    //     //console.log(track);
+    //     //console.log("NewPayment function called");
+    //     var paymentUrl;
 
-    mollie.payments.create({
-    amount: gift.price,
-    description: gift.name,
-    redirectUrl: "http://localhost:3000/#/gift-checkout"
-    },  Meteor.bindEnvironment(function (payment) {
-        if (payment.error) {
-            console.error(payment.error);
-            return;
-        }
 
-        /*
-         * Send the customer off to complete the payment.
-         */
-        //console.log(orderId);
-        //console.log(track);
-        //console.log(payment.getPaymentUrl());
-        paymentUrl = payment.getPaymentUrl(); 
+    //     // var molliePaymentCreate=Meteor.wrapAsync(mollie.payments.create,mollie.payments);
+    //     // // call the sync version of our API func with the parameters from the method call
+    //     // var payment=molliePaymentCreate({
+    //     // amount: gift.price,
+    //     // description: gift.name,
+    //     // //redirectUrl: "http://localhost:3000/#/"+track._id+"/new-gift/gift-checkout/"
+    //     // redirectUrl: "http://localhost:3000/#/home"
+    //     // });
+    //     // console.log(payment);
+    //     // paymentUrl = payment.getPaymentUrl();    
+
+    //     // Tracks.update(track._id, { $push: {
+    //     //     Payment: paymentUrl
+    //     // }});
+
+    //     // console.log(payment);
+    //     // console.log(paymentUrl);
+    //     // return paymentUrl;
+    //     // return paymentUrl;
+
+    //     mollie.payments.create({
+    //         amount: gift.price,
+    //         description: gift.name,
+    //         redirectUrl: "http://localhost:3000/#/"+track._id+"/new-gift/gift-checkout"
+    //         //redirectUrl: "http://localhost:3000/#/home"
+    //     },  Meteor.bindEnvironment(function (payment) {
+    //         if (payment.error) {
+    //             console.error(payment.error);
+    //             return;
+    //         }   
+    //         paymentUrl = payment.getPaymentUrl();    
+
+    //         Tracks.update(track._id, { $push: {
+    //             Payment: paymentUrl
+    //         }});
+    //         console.log(paymentUrl);
+    //         return paymentUrl;
+           
+    //     }));
+
+    //     console.log(paymentUrl);
+
+
+    // }
+
+    'newPayment': function(gift, track) { 
+      // load Future 
+      var newPayment = new Future(); 
         
-        //console.log(Tracks);
-        Tracks.update(track._id, { $push: {
+         mollie.payments.create({
+            amount: gift.price,
+            description: gift.name,
+            redirectUrl: "http://localhost:3000/#/"+track._id+"/new-gift/gift-checkout"
+            //redirectUrl: "http://localhost:3000/#/home"
+        },  Meteor.bindEnvironment(function (payment) {
+            if (payment.error) newPayment.throw(error);
+            paymentUrl = payment.getPaymentUrl();    
+
+            Tracks.update(track._id, { $push: {
                 Payment: paymentUrl
             }});
-
-        //console.log(Tracks.findOne(track._id));
-        console.log(paymentUrl);
-        //return paymentUrl;
-
-        
+            console.log(paymentUrl);
+            newPayment.return(paymentUrl);
+           
         }));
 
-    console.log(paymentUrl);
-    return paymentUrl;
-    //console.log("Payments .Create method called for mollie");
-    //console.log(response.end());
+        return newPayment.wait();
+
+    },
+    'checkPayment' : function(){
+
+        mollie.payments.get(_this.bod, function(payment) {
+            if (payment.error) {
+              console.error(payment.error);
+              return response.end();
+            }
+            /*
+              Update the order in the database.
+             */
+            if (payment.isPaid()) {
+
+              /*
+                At this point you'd probably want to start the process of delivering the product to the customer.
+               */
+            } else if (!payment.isOpen()) {
+
+              /*
+                The payment isn't paid and isn't open anymore. We can assume it was aborted.
+               */
+            }
+        });
     }
 
     });

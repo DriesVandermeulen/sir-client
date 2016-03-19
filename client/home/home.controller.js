@@ -7,8 +7,7 @@ function HomeCtrl ($scope, $reactive, $state) {
 
     this.goToNewGift = () => {
         var trackId = newGift();
-        //$state.go('newGift.selectEvent', { trackId });
-        $state.go('newGift.giftCheckout', { trackId });
+        $state.go('newGift.selectEvent', { trackId });
     };
 
     this.goToGifts = () => {
