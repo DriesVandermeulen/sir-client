@@ -109,10 +109,7 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
     }  
 
     this.buyGift = () => {
-        //$state.go('newGift.giftCheckout', { trackId });
-        //Meteor.call('sendMail', this.suggestion);
-        //var response = Meteor.call('newPayment', this.suggestion);
-
+        
         this.call('newPayment', this.suggestion, this.track, function (err, result) {
            
            this.result = result;

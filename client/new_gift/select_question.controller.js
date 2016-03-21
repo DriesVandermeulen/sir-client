@@ -58,7 +58,7 @@ function SelectQuestionCtrl($scope, $reactive, $state, $stateParams) {
         return Tracks.findOne(track._id);
     }
 
-      function updateTrackNo(track, question) {
+    function updateTrackNo(track, question) {
         Tracks.update(track._id, { $push: {
             'questions.no': question
             }
@@ -94,7 +94,7 @@ function SelectQuestionCtrl($scope, $reactive, $state, $stateParams) {
 
         if(search.event) {
             query.$and.push({"events.name": search.event});
-        }
+            }
 
         if(search.categories) {
             query.$and.push({"categories.name":{ $in: _.pluck(search.categories.yes, 'name')}});
@@ -103,10 +103,10 @@ function SelectQuestionCtrl($scope, $reactive, $state, $stateParams) {
 
         if(search.secondary) {
             query.$and.push({"questions.name":{ $in: search.secondary}});
-        }
+            }
         if(search.gifts) {
             query.$and.push({"id":{ $not: search.gifts}});
-        }
+            }
         if(search.questions) {
             query.$and.push({"questions.name":{ $nin: _.pluck(search.questions.no, 'name')}});
 
@@ -130,67 +130,62 @@ function SelectQuestionCtrl($scope, $reactive, $state, $stateParams) {
             //iterate through all questions of one gift
                 for(var k = 0, length = giftsFound[i].questions.length; k < length; k++) {    
 
-                //check if question is in the array list      
-                    if (!questions.some(function (el) {return el.name === giftsFound[i].questions[k].name;})) { 
-                        
-                        //if not => add to question list
-                        giftsFound[i].questions[k].count = 1;
-                        questions.push(giftsFound[i].questions[k]); 
-                        
-                        }
-                //if already in list => add count 
-                    else {
-                            var index = $.map(questions, function(obj, index) {
-                                if(obj.name == giftsFound[i].questions[k].name) {
-                                    return index;
-                                }
-                            })
-                            questions[index].count  = questions[index].count+1;
-                            console.log("count ++");
-                        }
-                }
+                    //check if question is in the array list      
+                        if (!questions.some(function (el) {return el.name === giftsFound[i].questions[k].name;})) { 
+                            
+                            //if not => add to question list
+                            giftsFound[i].questions[k].count = 1;
+                            questions.push(giftsFound[i].questions[k]); 
+                            
+                            }
+                    //if already in list => add count 
+                        else {
+                                var index = $.map(questions, function(obj, index) {
+                                    if(obj.name == giftsFound[i].questions[k].name) {
+                                        return index;
+                                    }
+                                })
+                                questions[index].count  = questions[index].count+1;
+                                //console.log("count ++");
+                            }
+                    }
             }
 
-            //remove all questions already asked
+            //remove all yes questions already asked
 
             for(var i = 0, l = search.questions.yes.length; i < l; i++) {
 
                 questions = _.reject(questions, function(question){ 
                     return question._id == search.questions.yes[i]._id; 
-                });
+                    });
 
             }
-
-             for(var i = 0, l = search.questions.no.length; i < l; i++) {
+            //remove all no questions already asked
+            for(var i = 0, l = search.questions.no.length; i < l; i++) {
 
                 questions = _.reject(questions, function(question){ 
                     return question._id == search.questions.no[i]._id; 
-                });
+                    });
 
             }
 
-            console.log(questions);
+            //console.log(questions);
 
             //sort list from max to min
             questions.sort(function (a, b) {
                   if (a.count < b.count) {
                     return 1;
-                  }
+                    }
                   if (a.count > b.count) {
                     return -1;
-                  }
+                    }
                   // a must be equal to b
                   return 0;
             });
 
             //ask index 0 as this is max question
-            //console.log(questions[0].text);
-
-            //alert with usdr input yes or no
             return(questions[0]);
            
-            //add question object to track.questions yes / no
-            //change find question => don't include yes /no questions 
         }
         else{
             console.log("No Gifts found");

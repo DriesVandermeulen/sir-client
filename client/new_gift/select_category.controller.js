@@ -20,9 +20,6 @@ function SelectCategoryCtrl($scope, $reactive, $state, $stateParams) {
 
     this.yes = () => {
         var track = updateTrackYes(this.track, this.category);
-        //$state.go('newGift.gifts', { trackId });
-       
-
         var categories = Categories.findOne({ 
             $and:[ 
                 { "_id":{ $nin: _.pluck(track.categories.yes, "_id")}}, 
@@ -32,12 +29,7 @@ function SelectCategoryCtrl($scope, $reactive, $state, $stateParams) {
 
         if(categories){
              $state.go($state.current, {trackId}, {reload: true});
-             //$state.go('newGift.selectCategory', { trackId });
-            //  $state.transitionTo($state.current, $stateParams, {
-            //     reload: true,
-            //     inherit: false,
-            //     notify: true
-            // });
+
         }
 
         else {
@@ -58,8 +50,7 @@ function SelectCategoryCtrl($scope, $reactive, $state, $stateParams) {
 
         if(categories){
               $state.go($state.current, {trackId}, {reload: true});
-              //$state.go('newGift.selectCategory', { trackId });
-              //window.location.reload(true);
+
         }
 
         else {

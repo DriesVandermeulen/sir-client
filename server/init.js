@@ -360,8 +360,6 @@ Meteor.startup(function () {
                   console.log("Paid!");
                   checkPayment.return(1);
                 } else if (payment.status !== "open") {
-
-                 
                  console.log("not Paid!");
                  checkPayment.return(0);
                 }
