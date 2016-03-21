@@ -1,19 +1,15 @@
 <ion-view view-title="Checkout Page">
     <ion-content>
         <div class="row">
-            <div class="col-50 col-offset-50">
-                    Mail has been send & Payment received
-                </div>
+             <h2 ng-bind="this.paymentStatus"></h2>
         </div>
         <div class="row">
-            <div class="col-50 col-offset-50">
-                <button class="button button-block button-positive" ng-click="selectEvent.next()">
-                    Next
-                </button>
-            </div>
-            <div class="col-50 col-offset-50">
-                <button class="button button-block button-positive" ng-click="selectEvent.next()">
-                    Back
+             <h2>Test</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button class="button button-block button-positive" ng-click="giftCheckout.home()">
+                    Done
                 </button>
             </div>
         </div>

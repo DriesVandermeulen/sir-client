@@ -34,7 +34,9 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
         const randomGift = Gifts.findOne(buildGiftSearchQuery(track));
         if(randomGift) {
             Tracks.update(trackId, { $push: {
-                suggestions: randomGift
+                suggestions: {
+                    $each: [randomGift],
+                    $position: 0}
             }});
         }
         return randomGift;
@@ -108,7 +110,7 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
 
     this.buyGift = () => {
         //$state.go('newGift.giftCheckout', { trackId });
-        Meteor.call('sendMail', this.suggestion);
+        //Meteor.call('sendMail', this.suggestion);
         //var response = Meteor.call('newPayment', this.suggestion);
 
         this.call('newPayment', this.suggestion, this.track, function (err, result) {
@@ -121,17 +123,8 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
 
     this.openPaymentWindow = (result) => {
         console.log(result);
-        track = Tracks.findOne(trackId);
-        console.log(track.Payment);
-        //if(track.payment.length) {
-            var paymentWindow = window.open(track.Payment, '_self', 'location=yes');
-        //}
-        //paymentWindow = window.open("http://www.google.com", '_blank', 'location=yes');
-        // paymentWindow.addEventListener('exit', function(event) { 
-        //         alert(event.type); 
-        //         console.log("event listener triggered");
-        //         ref.close();
-        // });
+        var paymentWindow = window.open(result, '_self', 'location=yes');
+
     }
 
 

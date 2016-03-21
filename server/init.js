@@ -6,7 +6,6 @@ Meteor.startup(function () {
     Mollie = Meteor.npmRequire('mollie-api-node');
     Future = Meteor.npmRequire('fibers/future');
     mollie = new Mollie.API.Client;
-    console.log(mollie);
     mollie.setApiKey("test_Qk8pSfhFJgjhPAj5hDknAefAgcrAhU");
 
     if (Meteor.users.find().count() === 0) {
@@ -311,7 +310,6 @@ Meteor.startup(function () {
 
     } 
     
-
     Meteor.methods({
     'sendMail': function(randomGift){
         Email.send({
@@ -323,74 +321,23 @@ Meteor.startup(function () {
       });
     },
 
-    // 'newPayment' : function(gift, track){
-    //     orderId = new Date().getTime();
-    //     //console.log(gift);
-    //     //console.log(track);
-    //     //console.log("NewPayment function called");
-    //     var paymentUrl;
-
-
-    //     // var molliePaymentCreate=Meteor.wrapAsync(mollie.payments.create,mollie.payments);
-    //     // // call the sync version of our API func with the parameters from the method call
-    //     // var payment=molliePaymentCreate({
-    //     // amount: gift.price,
-    //     // description: gift.name,
-    //     // //redirectUrl: "http://localhost:3000/#/"+track._id+"/new-gift/gift-checkout/"
-    //     // redirectUrl: "http://localhost:3000/#/home"
-    //     // });
-    //     // console.log(payment);
-    //     // paymentUrl = payment.getPaymentUrl();    
-
-    //     // Tracks.update(track._id, { $push: {
-    //     //     Payment: paymentUrl
-    //     // }});
-
-    //     // console.log(payment);
-    //     // console.log(paymentUrl);
-    //     // return paymentUrl;
-    //     // return paymentUrl;
-
-    //     mollie.payments.create({
-    //         amount: gift.price,
-    //         description: gift.name,
-    //         redirectUrl: "http://localhost:3000/#/"+track._id+"/new-gift/gift-checkout"
-    //         //redirectUrl: "http://localhost:3000/#/home"
-    //     },  Meteor.bindEnvironment(function (payment) {
-    //         if (payment.error) {
-    //             console.error(payment.error);
-    //             return;
-    //         }   
-    //         paymentUrl = payment.getPaymentUrl();    
-
-    //         Tracks.update(track._id, { $push: {
-    //             Payment: paymentUrl
-    //         }});
-    //         console.log(paymentUrl);
-    //         return paymentUrl;
-           
-    //     }));
-
-    //     console.log(paymentUrl);
-
-
-    // }
-
     'newPayment': function(gift, track) { 
       // load Future 
       var newPayment = new Future(); 
         
-         mollie.payments.create({
+        mollie.payments.create({
             amount: gift.price,
             description: gift.name,
             redirectUrl: "http://localhost:3000/#/"+track._id+"/new-gift/gift-checkout"
             //redirectUrl: "http://localhost:3000/#/home"
         },  Meteor.bindEnvironment(function (payment) {
             if (payment.error) newPayment.throw(error);
-            paymentUrl = payment.getPaymentUrl();    
+            paymentUrl = payment.getPaymentUrl();
+            paymentID = payment.id;  
 
             Tracks.update(track._id, { $push: {
-                Payment: paymentUrl
+                paymentUrl: paymentUrl,
+                paymentID: paymentID
             }});
             console.log(paymentUrl);
             newPayment.return(paymentUrl);
@@ -400,28 +347,26 @@ Meteor.startup(function () {
         return newPayment.wait();
 
     },
-    'checkPayment' : function(){
+    'checkPayment' : function(track){
+        var checkPayment = new Future; 
+        console.log(track.paymentID[0]);
+        mollie.payments.get(track.paymentID, function(payment) {
+                if (payment.error) {
+                    checkPayment.throw(payment.error);  
+                }           
 
-        mollie.payments.get(_this.bod, function(payment) {
-            if (payment.error) {
-              console.error(payment.error);
-              return response.end();
-            }
-            /*
-              Update the order in the database.
-             */
-            if (payment.isPaid()) {
+                if (payment.status == "paid") {
 
-              /*
-                At this point you'd probably want to start the process of delivering the product to the customer.
-               */
-            } else if (!payment.isOpen()) {
+                  console.log("Paid!");
+                  checkPayment.return(1);
+                } else if (payment.status !== "open") {
 
-              /*
-                The payment isn't paid and isn't open anymore. We can assume it was aborted.
-               */
-            }
-        });
+                 
+                 console.log("not Paid!");
+                 checkPayment.return(0);
+                }
+            });
+        return checkPayment.wait();
     }
 
     });
