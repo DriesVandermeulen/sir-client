@@ -14,6 +14,10 @@ function HomeCtrl ($scope, $reactive, $state) {
         $state.go('gifts');
     };
 
+    this.gotoHistory = () => {
+        $state.go('history');
+    }
+
     function newGift() {
         return Tracks.insert({
             event: '',
@@ -24,6 +28,14 @@ function HomeCtrl ($scope, $reactive, $state) {
             price: {
                 min: 0,
                 max: 100
+            },
+            categories: {
+                yes: [],
+                no: []
+            },
+            questions: {
+                yes: [],
+                no: []
             },
             suggestions: [],
             createdBy: Meteor.userId()

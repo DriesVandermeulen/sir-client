@@ -6,28 +6,48 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
     $reactive(this).attach($scope);
 
     var trackId = $stateParams.trackId;
-    var track = Tracks.findOne(trackId);
-    var suggestion = suggestGift(track);
+    var placeholder = {
+        name:"We don't have a gift for you at the moment",
+        description:"please come back another time"
+    };
+    this.sugestionCount = 0;
 
     this.helpers({
-        suggestion() { return suggestion }
+        track() {
+            return Tracks.findOne(trackId);
+        },
+        suggestion() {
+            let count = this.getReactively('sugestionCount')
+            let track = this.track;
+            let suggestion = suggestGift(track); 
+            console.log(suggestion)
+            if(suggestion) return suggestion
+            else return placeholder
+        }
     });
 
     this.suggestAnotherGift = () => {
-        suggestion = suggestGift(track);
+        this.sugestionCount++;
     };
 
     function suggestGift(track) {
-        var gifts = findGifts(track).fetch();
-        var randomGift = gifts[Math.floor(Math.random() * gifts.length)]
-        Tracks.update(track._id, { $push: {
-            suggestions: randomGift
-        }});
+        const randomGift = Gifts.findOne(buildGiftSearchQuery(track));
+        if(randomGift) {
+            Tracks.update(trackId, { $push: {
+                suggestions: {
+                    $each: [randomGift],
+                    $position: 0}
+            }});
+        }
         return randomGift;
     }
+    
+    function buildGiftSearchQuery(search) {
+        let query = {};
+        
+        if(!search) return query;
 
-    function findGifts(search) {
-        var query = {$and: []};
+        query.$and = [];
 
         if(search.age) {
             query.$and.push({"age.min":{ $lte: search.age}});
@@ -56,18 +76,54 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
             query.$and.push({"events.name": search.event});
         }
 
-        if(search.primary) {
-            query.$and.push({"tags.context.primary.name":{ $in: search.primary}});
+        if(search.categories) {
+            query.$and.push({"categories.name":{ $in: _.pluck(search.categories.yes, 'name')}});
+            query.$and.push({"categories.name":{ $nin: _.pluck(search.categories.no, 'name')}});
         }
+
         if(search.secondary) {
-            query.$and.push({"tags.context.secondary.name":{ $in: search.secondary}});
+            query.$and.push({"questions.name":{ $in: search.secondary}});
         }
         if(search.suggestions) {
-            query.$and.push({"id":{ $in: search.suggestions}});
+            //query.$and.push({"id":{ $nin: search.suggestions}});
+            query.$and.push({"_id":{ $nin: _.pluck(search.suggestions, '_id')}});
         }
-        if(search.gifts) {
-            query.$and.push({"id":{ $in: search.gifts}});
-        }
-        return Gifts.find(query);
+        if(search.questions) {
+            query.$and.push({"questions.name":{ $nin: _.pluck(search.questions.no, 'name')}});
+
+            // query.$and.push({ "questions": { $elemMatch: { "_id": { $nin: _.pluck(search.questions.no, '_id') } } } });
+
+        }        
+
+        return query;
+    }   
+
+    function buildGiftSearchQuery_AnsweredYes(search) {
+        let query = {};
+        if(!search) return query;
+
+        query = buildGiftSearchQuery(search)
+        query.$and.push({"questions.name":{ $in: _.pluck(search.questions.yes, 'name')}});
+
+        return query;
+    }  
+
+    this.buyGift = () => {
+        
+        this.call('newPayment', this.suggestion, this.track, function (err, result) {
+           
+           this.result = result;
+           this.openPaymentWindow(result);
+         });
+
     }
+
+    this.openPaymentWindow = (result) => {
+        console.log(result);
+        var paymentWindow = window.open(result, '_self', 'location=yes');
+
+    }
+
+
+
 }

@@ -1,0 +1,27 @@
+<ion-view view-title="Select Category">
+    <ion-content>
+        <div class="list card">
+            <div class="item item-avatar">
+                <img src="img/questionAvatar.jpg">
+                <h2 ng-bind="selectCategory.category.text"></h2>
+            </div>
+            <div class="item item-body">
+                <img class="full-image" ng-src="img/{{selectCategory.category._id}}.jpg" alt="its just a test"/>
+            </div>
+            <div class="item no-padding">
+                <div class="row no-padding">
+                    <div class="col">
+                        <button class="button button-block button-positive" ng-click="selectCategory.yes()">Yes</button>
+                    </div>
+                    <div class="col">
+                        <button class="button button-block button-positive" ng-click="selectCategory.no()">No</button>
+                    </div>
+                    <div class="col">
+                        <button class="button button-block button-positive" ng-click="selectCategory.yes()">I Don't Know</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+
+</ion-view>

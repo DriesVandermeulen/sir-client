@@ -6,15 +6,15 @@ function SelectPriceCtrl($scope, $reactive, $state, $stateParams) {
     $reactive(this).attach($scope);
 
     var trackId = $stateParams.trackId;
-    var track = Tracks.findOne(trackId);
+    //var track = Tracks.findOne(trackId);
 
     this.helpers({
-        track() { return track }
+        track() { return Tracks.findOne(trackId) }
     });
 
     this.next = () => {
         updateTrack(this.track);
-        $state.go('newGift.gifts', { trackId });
+        $state.go('newGift.selectCategory', { trackId });
     };
 
     this.previous = () => {

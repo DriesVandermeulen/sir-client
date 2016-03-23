@@ -1,6 +1,13 @@
 Meteor.startup(function () {
     //Meteor.users.remove({});
 
+    process.env.MAIL_URL = 'smtp://postmaster%40giftsbysir.com:d4f12027a5eedd67d100313bf142d402@smtp.mailgun.org:587';
+
+    Mollie = Meteor.npmRequire('mollie-api-node');
+    Future = Meteor.npmRequire('fibers/future');
+    mollie = new Mollie.API.Client;
+    mollie.setApiKey("test_Qk8pSfhFJgjhPAj5hDknAefAgcrAhU");
+
     if (Meteor.users.find().count() === 0) {
         var users = [
             {name:"Dries",email:"dries@giftsbysir.com",roles:['admin']},
@@ -28,10 +35,10 @@ Meteor.startup(function () {
         });
     }
 
-    Gifts.remove({});
-    Events.remove({});
-    Questions.remove({});
-    Categories.remove({});
+    //Gifts.remove({});
+    //Events.remove({});
+    //Questions.remove({});
+    //Categories.remove({});
 
     if (Gifts.find().count() === 0) {
         //insert Gift1 with 1 Gifts tag + Contact tags : 1 primary Tag and 2 SubTags | Housewarming
@@ -183,7 +190,18 @@ Meteor.startup(function () {
 
 
         var categoryBooks = Categories.findOne(Categories.insert({
-            name: "books"
+            name: "books",
+            text: "does he/she loves to read books ?"
+        }));
+        
+        var categoryDesign = Categories.findOne(Categories.insert({
+            name: "design",
+            text: "does he/she loves design?"
+        }));
+            var categoryGadget = Categories.findOne(Categories.insert({
+            name: "gadget",
+            text: "Is he/she a Gadget person?"
+
         }));
 
         var questionMakesYouSmile = Questions.findOne(Questions.insert({
@@ -191,18 +209,174 @@ Meteor.startup(function () {
             text: "Does he or she like humor? "
         }));
 
+        var questionMakesYouSmile2 = Questions.findOne(Questions.insert({
+            name: "makes you smile2",
+            text: "Does he or she like humor2? "
+        }));
+
+        var questionMakesYouSmile3 = Questions.findOne(Questions.insert({
+            name: "makes you smile3",
+            text: "Does he or she like humor3? "
+        }));
+
+        var questionMakesYouSmile4 = Questions.findOne(Questions.insert({
+            name: "makes you smile4",
+            text: "Does he or she like humor4? "
+        }));
+
         Gifts.insert({
-            name: "Some gift",
+            name: "Design Gift",
             description: "Some description",
             events: [eventHousewarming],
             price: 24,
-            gender: 'V',
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryDesign],
+            questions: [questionMakesYouSmile, questionMakesYouSmile2]
+        });
+
+        Gifts.insert({
+            name: "Books & Design Gift",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryBooks, categoryDesign],
+            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+        });
+
+        Gifts.insert({
+            name: "Gadget",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryGadget],
+            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+        });
+
+        Gifts.insert({
+            name: "Design Gift2",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryDesign],
+            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+        });
+
+        Gifts.insert({
+            name: "Books 4",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
             age: {
                 min: 25,
                 max: 40
             },
             categories: [categoryBooks],
-            questions: [questionMakesYouSmile]
+            questions: [questionMakesYouSmile, questionMakesYouSmile3]
         });
+
+        Gifts.insert({
+            name: "Books 5",
+            description: "Some description",
+            events: [eventHousewarming],
+            price: 24,
+            gender: 'F',
+            age: {
+                min: 25,
+                max: 40
+            },
+            categories: [categoryBooks],
+            questions: [questionMakesYouSmile,]
+        });
+
+    } 
+    
+    Meteor.methods({
+    'sendMail': function(randomGift){
+        Email.send({
+        from: "stein@giftsbysir.com",
+        to: "steinvermeulen@gmail.com",
+        replyTo: "stein@giftsbysir.com",
+        subject: "Gift: " + randomGift.name + " was just ordered via Sir",
+        html: ''
+      });
+    },
+
+    'newPayment': function(gift, track) { 
+      // load Future 
+      var newPayment = new Future(); 
+        
+        mollie.payments.create({
+            amount: gift.price,
+            description: gift.name,
+            redirectUrl: "http://localhost:3000/#/"+track._id+"/new-gift/gift-checkout"
+            //redirectUrl: "http://localhost:3000/#/home"
+        },  Meteor.bindEnvironment(function (payment) {
+            if (payment.error) newPayment.throw(error);
+            paymentUrl = payment.getPaymentUrl();
+            paymentID = payment.id;  
+
+            Tracks.update(track._id, { $push: {
+                paymentUrl: paymentUrl,
+                paymentID: paymentID
+            }});
+            console.log(paymentUrl);
+            newPayment.return(paymentUrl);
+           
+        }));
+
+        return newPayment.wait();
+
+    },
+    'checkPayment' : function(trackId){
+        var track = Tracks.findOne(trackId);
+        var checkPayment = new Future; 
+        console.log(track.paymentID[0]);
+        mollie.payments.get(track.paymentID, Meteor.bindEnvironment(function(payment) {
+                if (payment.error) {
+                    checkPayment.throw(payment.error);  
+                }           
+
+                if (payment.status == "paid") {
+                   
+                    Tracks.update(track._id, { $push: {
+                        status: "Completed"
+                    }});
+                   
+                   console.log("Paid!");
+                   checkPayment.return(1);
+                } else if (payment.status !== "open") {
+
+                    
+                    Tracks.update(track._id, { $push: {
+                        status: "Expired"
+                    }});
+
+                    console.log("not Paid!");
+                    checkPayment.return(0);
+                }
+            }));
+        return checkPayment.wait();
     }
+
+    });
 });
