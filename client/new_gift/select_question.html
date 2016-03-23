@@ -1,14 +1,26 @@
 <ion-view view-title="Please anwser the following question:">
     <ion-content>
-        <div>
-            <div>
-                <span ng-bind="selectQuestion.question.text"></span>
-                <br>
-                <button class="button button-block button-positive" ng-click="selectQuestion.yes()">Yes</button>
-                <button class="button button-block button-positive" ng-click="selectQuestion.no()">No</button>
-                <button class="button button-block button-positive" ng-click="selectQuestion.yes()">I Don't Know</button>
+        <div class="list card">
+            <div class="item item-avatar">
+                <img src="img/questionAvatar.jpg">
+                <h2 ng-bind="selectQuestion.question.text"></h2>
             </div>
-            
+            <div class="item item-body">
+                <img class="full-image" ng-src="img/{{selectQuestion.question._id}}.jpg" alt="its just a test"/>
+            </div>
+            <div class="item no-padding">
+                <div class="row no-padding">
+                    <div class="col">
+                        <button class="button button-block button-positive" ng-click="selectQuestion.yes()">Yes</button>
+                    </div>
+                    <div class="col">
+                        <button class="button button-block button-positive" ng-click="selectQuestion.no()">No</button>
+                    </div>
+                    <div class="col">
+                        <button class="button button-block button-positive" ng-click="selectQuestion.yes()">I Don't Know</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </ion-content>
 </ion-view>

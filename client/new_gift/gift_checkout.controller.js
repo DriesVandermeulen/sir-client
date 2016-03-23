@@ -9,10 +9,12 @@ function GiftCheckoutCtrl ($scope, $reactive, $stateParams, $state) {
     //var track = Tracks.findOne(trackId);
     var checkpaymentStatus; 
 
+    checkPayment(trackId);
+
     this.helpers({
     track() {
             let track = Tracks.findOne(trackId);
-            checkPayment(track);
+            
      }
     });
 
@@ -29,9 +31,9 @@ function checkPayment (track){
 	 	
 	 	Meteor.call('checkPayment', track, function (err, result) {
            if (result == 1){
-           	sendMail(track);
+           	//sendMail(track);
            	console.log("Payment Received");
-			this.paymentStatus = "Je betaling is goed ontvangen. Parcify neemt binnen de 12u met je contact op om de levering in orde te brengen";
+            this.paymentStatus = "Je betaling is goed ontvangen. Parcify neemt binnen de 12u met je contact op om de levering in orde te brengen";
            	return;
            }
            else { 

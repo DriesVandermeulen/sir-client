@@ -35,10 +35,10 @@ Meteor.startup(function () {
         });
     }
 
-    Gifts.remove({});
-    Events.remove({});
-    Questions.remove({});
-    Categories.remove({});
+    //Gifts.remove({});
+    //Events.remove({});
+    //Questions.remove({});
+    //Categories.remove({});
 
     if (Gifts.find().count() === 0) {
         //insert Gift1 with 1 Gifts tag + Contact tags : 1 primary Tag and 2 SubTags | Housewarming
@@ -347,23 +347,34 @@ Meteor.startup(function () {
         return newPayment.wait();
 
     },
-    'checkPayment' : function(track){
+    'checkPayment' : function(trackId){
+        var track = Tracks.findOne(trackId);
         var checkPayment = new Future; 
         console.log(track.paymentID[0]);
-        mollie.payments.get(track.paymentID, function(payment) {
+        mollie.payments.get(track.paymentID, Meteor.bindEnvironment(function(payment) {
                 if (payment.error) {
                     checkPayment.throw(payment.error);  
                 }           
 
                 if (payment.status == "paid") {
-
-                  console.log("Paid!");
-                  checkPayment.return(1);
+                   
+                    Tracks.update(track._id, { $push: {
+                        status: "Completed"
+                    }});
+                   
+                   console.log("Paid!");
+                   checkPayment.return(1);
                 } else if (payment.status !== "open") {
-                 console.log("not Paid!");
-                 checkPayment.return(0);
+
+                    
+                    Tracks.update(track._id, { $push: {
+                        status: "Expired"
+                    }});
+
+                    console.log("not Paid!");
+                    checkPayment.return(0);
                 }
-            });
+            }));
         return checkPayment.wait();
     }
 

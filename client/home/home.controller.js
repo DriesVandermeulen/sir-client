@@ -14,6 +14,10 @@ function HomeCtrl ($scope, $reactive, $state) {
         $state.go('gifts');
     };
 
+    this.gotoHistory = () => {
+        $state.go('history');
+    }
+
     function newGift() {
         return Tracks.insert({
             event: '',

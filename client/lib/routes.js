@@ -17,6 +17,14 @@ function config($stateProvider, $urlRouterProvider) {
                 user() { return Meteor.user(); }
             }
         })
+        .state('history', {
+            url: '/history',
+            templateUrl: 'client/new_gift/history.html',
+            controller: 'HistoryCtrl as history',
+            resolve: {
+                user() { return Meteor.user(); }
+            }
+        })
         .state('newGift', {
             url: '/:trackId/new-gift',
             abstract: true,
