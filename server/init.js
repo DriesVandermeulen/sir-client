@@ -35,10 +35,10 @@ Meteor.startup(function () {
         });
     }
 
-    //Gifts.remove({});
-    //Events.remove({});
-    //Questions.remove({});
-    //Categories.remove({});
+    Gifts.remove({});
+    Events.remove({});
+    Questions.remove({});
+    Categories.remove({});
 
     if (Gifts.find().count() === 0) {
         //insert Gift1 with 1 Gifts tag + Contact tags : 1 primary Tag and 2 SubTags | Housewarming
@@ -72,7 +72,8 @@ Meteor.startup(function () {
                             name: "bibliografie",
                         }]
                 }
-            }
+            },
+            randomID: Math.random()
         });
 
         //insert Gift2 with 1 Gifts tag + Contact tags : 1 primary Tag and 2 SubTags | Housewarming
@@ -109,7 +110,9 @@ Meteor.startup(function () {
                             tagId: 1
                         }]
                 }
-            }
+            },
+            randomID: Math.random()
+
         });
 
         //insert Gift3 with 1 Gifts tag + Contact tags : 2 primary Tag and 1 SubTags | Housewarming
@@ -145,7 +148,8 @@ Meteor.startup(function () {
                         tagId: 1
                     }]
                 }
-            }
+            },
+            randomID: Math.random()
         });
 
         //insert Gift4 with 1 Gifts tag + Contact tags : 2 primary Tag and 1 SubTags | Housewarming
@@ -181,7 +185,8 @@ Meteor.startup(function () {
                         tagId: 1
                     }]
                 }
-            }
+            },
+            randomID: Math.random()
         });
 
         var eventHousewarming = Events.findOne(Events.insert({
@@ -235,7 +240,8 @@ Meteor.startup(function () {
                 max: 40
             },
             categories: [categoryDesign],
-            questions: [questionMakesYouSmile, questionMakesYouSmile2]
+            questions: [questionMakesYouSmile, questionMakesYouSmile2],
+            randomID: Math.random()
         });
 
         Gifts.insert({
@@ -249,7 +255,8 @@ Meteor.startup(function () {
                 max: 40
             },
             categories: [categoryBooks, categoryDesign],
-            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+            questions: [questionMakesYouSmile, questionMakesYouSmile4],
+            randomID: Math.random()
         });
 
         Gifts.insert({
@@ -263,7 +270,8 @@ Meteor.startup(function () {
                 max: 40
             },
             categories: [categoryGadget],
-            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+            questions: [questionMakesYouSmile, questionMakesYouSmile4],
+            randomID: Math.random()
         });
 
         Gifts.insert({
@@ -277,7 +285,8 @@ Meteor.startup(function () {
                 max: 40
             },
             categories: [categoryDesign],
-            questions: [questionMakesYouSmile, questionMakesYouSmile4]
+            questions: [questionMakesYouSmile, questionMakesYouSmile4],
+            randomID: Math.random()
         });
 
         Gifts.insert({
@@ -291,7 +300,8 @@ Meteor.startup(function () {
                 max: 40
             },
             categories: [categoryBooks],
-            questions: [questionMakesYouSmile, questionMakesYouSmile3]
+            questions: [questionMakesYouSmile, questionMakesYouSmile3],
+            randomID: Math.random()
         });
 
         Gifts.insert({
@@ -305,7 +315,8 @@ Meteor.startup(function () {
                 max: 40
             },
             categories: [categoryBooks],
-            questions: [questionMakesYouSmile,]
+            questions: [questionMakesYouSmile,],
+            randomID: Math.random()
         });
 
     } 
@@ -335,7 +346,7 @@ Meteor.startup(function () {
             paymentUrl = payment.getPaymentUrl();
             paymentID = payment.id;  
 
-            Tracks.update(track._id, { $push: {
+            Tracks.update(track._id, { $set: {
                 paymentUrl: paymentUrl,
                 paymentID: paymentID
             }});
@@ -358,7 +369,7 @@ Meteor.startup(function () {
 
                 if (payment.status == "paid") {
                    
-                    Tracks.update(track._id, { $push: {
+                    Tracks.update(track._id, { $set: {
                         status: "Completed"
                     }});
                    
@@ -367,7 +378,7 @@ Meteor.startup(function () {
                 } else if (payment.status !== "open") {
 
                     
-                    Tracks.update(track._id, { $push: {
+                    Tracks.update(track._id, { $set: {
                         status: "Expired"
                     }});
 

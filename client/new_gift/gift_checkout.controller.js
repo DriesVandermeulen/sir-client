@@ -27,17 +27,33 @@ function sendMail(track){
 	Meteor.call('sendMail', suggestions[0]);
 }
 
-function checkPayment (track){
+function checkPayment (trackId){
 	 	
-	 	Meteor.call('checkPayment', track, function (err, result) {
+	 	Meteor.call('checkPayment', trackId, function (err, result) {
+
+          var track = Tracks.findOne(trackId);          
            if (result == 1){
            	//sendMail(track);
+            var purchase = Purchases.findOne({trackID : trackId});
+            Purchases.update(
+              {
+                _id: purchase._id
+              },
+              { $set: 
+                {
+                  paymentStatus : track.status,
+                  paymentUrl : track.paymentUrl
+                }
+              }
+            );
+
            	console.log("Payment Received");
             this.paymentStatus = "Je betaling is goed ontvangen. Parcify neemt binnen de 12u met je contact op om de levering in orde te brengen";
            	return;
            }
            else { 
-           	console.log("Payment NOT Received");
+           	
+            console.log("Payment NOT Received");
            	this.paymentStatus = "Je betaling is niet ontvangen. Gelieve je bestelling opnieuw te plaatsen.";
            	return;
            }
