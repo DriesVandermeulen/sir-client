@@ -7,12 +7,12 @@ function HistoryCtrl($scope, $reactive, $state, $stateParams) {
 
     var userID = Meteor.userId();
 
-    //let giftHistory = Tracks.find( { createdBy: userID, $where:}).fetch();
+    //let giftHistory = Tracks.find( {$and: [{ createdBy: userID, }, { status: { $not: {$ne: "Completed"} } }]});
 
     
     this.helpers({
-        track() {
-            return Tracks.findOne(trackId);
+        purchases() {
+            return Purchases.find( {$and: [{ userID: userID, }, { paymentStatus: { $not: {$ne: "Completed"} } }]});
         }
     });
     

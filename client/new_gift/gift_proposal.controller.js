@@ -31,7 +31,18 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
     };
 
     function suggestGift(track) {
-        const randomGift = Gifts.findOne(buildGiftSearchQuery(track));
+        var query = buildGiftSearchQuery(track); 
+        var rand = Math.random(); 
+
+        query.$and.push( {randomID : { $gte : rand}} )
+
+        var randomGift = Gifts.findOne( query );
+        if ( randomGift == null ) {
+            query.$and.pop();
+            query.$and.push( {randomID : { $lte : rand}} );
+            randomGift = Gifts.findOne( query );
+        }
+
         if(randomGift) {
             Tracks.update(trackId, { $push: {
                 suggestions: {
@@ -48,6 +59,7 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
         if(!search) return query;
 
         query.$and = [];
+
 
         if(search.age) {
             query.$and.push({"age.min":{ $lte: search.age}});
@@ -109,7 +121,16 @@ function GiftProposalCtrl ($scope, $reactive, $stateParams) {
     }  
 
     this.buyGift = () => {
-        
+        var track = Tracks.findOne(trackId);  
+        Purchases.insert({
+              userID : Meteor.userId(),
+              dateCreated : Date.now(),
+              gift: track.suggestions[0],
+              trackID : trackId,
+              paymentStatus : "Created",
+              paymentUrl : "Requested"
+        });
+
         this.call('newPayment', this.suggestion, this.track, function (err, result) {
            
            this.result = result;

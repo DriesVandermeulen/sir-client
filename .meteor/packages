@@ -28,3 +28,4 @@ meteorhacks:npm
 npm-container
 email
 angular@1.3.6-beta.1
+meteorhacks:aggregate
